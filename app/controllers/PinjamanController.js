@@ -2,8 +2,20 @@ const { tb_pinjaman } = require("../models");
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
-const upload = multer().single("foto");
-const resize = require("../services/resize.service");
+const diskStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../public/pinjaman"));
+  },
+  // konfigurasi penamaan file yang unik
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+const upload = multer({ storage: diskStorage }).single("file");
+// const resize = require("../services/resize.service");
 
 class PinjamanController {
   async InsertData(req, res) {
@@ -17,12 +29,8 @@ class PinjamanController {
       } else if (err) {
         return res.status(200).json(err);
       }
-      // try {
-    
-      const imagePath = path.join(__dirname, "../../public/pinjaman");
-      const fileUpload = new resize(imagePath);
-      let foto = await fileUpload.save(req.file.buffer, req.file.originalname);
-
+      
+      
       const item={
         nik: req.body.nik,
         nama: req.body.nama,
@@ -32,7 +40,7 @@ class PinjamanController {
         pendapatan: req.body.pendapatan,
         kekayaan: req.body.kekayaan,
         hasil: req.body.hasil,
-        foto: foto,
+        foto: req.file.filename,
         lulus: false,
       }
       dtPinjaman = await tb_pinjaman.create(item);
@@ -63,6 +71,7 @@ class PinjamanController {
     let message;
     let dtPinjaman;
     //try catch untuk menangkap error
+    console.log("pinjaman");
     try {
       const id = req.params.id;
       //menyeleksi id
@@ -236,14 +245,12 @@ class PinjamanController {
     let message;
     let dtPinjaman;
     //try catch untuk menangkap error
-    
-        //mencari data sesuai id
-        dtPinjaman = await tb_pinjaman.findAll({
-            where: {lulus:true},
-            order:[["id","ASC"]]
-        });
+    console.log("entri");
+      dtPinjaman = await tb_pinjaman.findAll({
+          where: {lulus:true},
+          order:[["id","ASC"]]
+      });
       
-      //menyeleksi data ada atau tidak
       if (dtPinjaman) {
         status = 200;
         message = "Data ditemukan";
@@ -251,11 +258,7 @@ class PinjamanController {
         status = 404;
         message = "Data Tidak ditemukan";
       }
-    // } catch (err) {
-    //   console.log("error : ", err);
-    //   status = 404;
-    //   message = `Terjadi Kesalahan (error) : ${err}`;
-    // }
+    
     //membuat diagnostic
     let time = Date.now() - req.start;
     const used = process.memoryUsage().heapUsed / 1024 / 1024;

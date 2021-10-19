@@ -3,8 +3,20 @@ const { tb_surat_izin } = require("../models");
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
-const upload = multer().single("foto");
-const resize = require("../services/resize.service");
+const diskStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../public/suratIzin"));
+  },
+  // konfigurasi penamaan file yang unik
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+const upload = multer({ storage: diskStorage }).single("file");
+// const resize = require("../services/resize.service");
 
 class SuratIzinController {
   async InsertData(req, res) {
@@ -18,19 +30,13 @@ class SuratIzinController {
       } else if (err) {
         return res.status(200).json(err);
       }
-      // try {
-    
-      const imagePath = path.join(__dirname, "../../public/suratIzin");
-      const fileUpload = new resize(imagePath);
-      let foto = await fileUpload.save(req.file.buffer, req.file.originalname);
-
       const item={
         nik: req.body.nik,
         nama: req.body.nama,
         jenis_usaha: req.body.jenis_usaha,
         email: req.body.email,
         alamat: req.body.alamat,
-        foto: foto,
+        foto: req.file.filename,
       }
       dtSurat = await tb_surat_izin.create(item);
 
@@ -111,12 +117,12 @@ class SuratIzinController {
         let imageName
         let foto
         // const id = req.params.id;
-        if (err instanceof multer.MulterError) {
-            // a multer error occurred when uploading
-            return res.status(200).json(err);
-          } else if (err) {
-            return res.status(200).json(err);
-          }
+        // if (err instanceof multer.MulterError) {
+        //     // a multer error occurred when uploading
+        //     return res.status(200).json(err);
+        //   } else if (err) {
+        //     return res.status(200).json(err);
+        //   }
         
           if (req.params.nik == null) {
             status = 400;
@@ -130,27 +136,27 @@ class SuratIzinController {
               message = "Data Member Tidak Ditemukan";
             } else {
               imageName = dtSurats.foto;
-              console.log(imageName);
-              await fs.unlink(`./public/suratIzin/${imageName}`, function (
-                err
-              ) {
-                if (err) throw err;
-                console.log("File deleted!");
-              });
+              // console.log(imageName);
+              // await fs.unlink(`./public/suratIzin/${imageName}`, function (
+              //   err
+              // ) {
+              //   if (err) throw err;
+              //   console.log("File deleted!");
+              // });
     
-              const imagePath = path.join(
-                __dirname,
-                "../../public/suratIzin"
-              );
-              const fileUpload = new resize(imagePath);
-              foto = await fileUpload.save(req.file.buffer, req.file.originalname, 600, 600);
+              // const imagePath = path.join(
+              //   __dirname,
+              //   "../../public/suratIzin"
+              // );
+              // const fileUpload = new resize(imagePath);
+              // foto = await fileUpload.save(req.file.buffer, req.file.originalname, 600, 600);
               const item={
                 nik: req.body.nik,
                 nama: req.body.nama,
                 jenis_usaha: req.body.jenis_usaha,
                 email: req.body.email,
                 alamat: req.body.alamat,
-                foto: foto,
+                // foto: foto,
               }
               dtSurat = await tb_surat_izin.update(item, {
                 where: { nik: req.params.nik }

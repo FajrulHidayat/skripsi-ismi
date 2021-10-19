@@ -1,6 +1,6 @@
 // import {createBlackList }  from "jwt-blacklist";
 const jwt = require("jsonwebtoken");
-const {createBlackList} = require('jwt-blacklist')
+// const {createBlackList} = require('jwt-blacklist')
 
 
 // require("dotenv/config");
@@ -11,10 +11,10 @@ const secret =
 const authService = async() => {
  
 // memory
-const _blacklist = await createBlackList({
-  daySize: 10000, // optional, number of tokens need revoking each day
-  errorRate: 0.001, // optional, error rate each day
-});
+// const _blacklist = await createBlackList({
+//   daySize: 10000, // optional, number of tokens need revoking each day
+//   errorRate: 0.001, // optional, error rate each day
+// });
  
 // redis
 // const blacklist = await createBlackList({

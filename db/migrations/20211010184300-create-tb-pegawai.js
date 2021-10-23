@@ -2,13 +2,9 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('tb_pegawais', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       nip: {
+        allowNull: false,
+        primaryKey: true,
         type: Sequelize.STRING
       },
       nama: {

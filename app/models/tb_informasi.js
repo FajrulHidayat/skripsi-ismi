@@ -21,5 +21,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'tb_informasi',
   });
+  tb_informasi.removeAttribute('id')
   return tb_informasi;
 };

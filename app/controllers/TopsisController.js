@@ -1,4 +1,4 @@
-const { tb_alternatif,tb_kriteria,tb_hasil_survei } = require("../models");
+const { tb_alternatif,tb_kriteria,tb_hasil_survei,tb_pinjaman } = require("../models");
 
 class TopsisController {
     async Topsis(req, res) {
@@ -10,12 +10,12 @@ class TopsisController {
         let pembagi=[],matriksPengali=[],matriksKeputusan=[],max=[],min=[],dPlus=[],dMin=[],preferensi=[]
         
         //get data
-        dtAlternatif = await tb_alternatif.findAll({ order: [["kode_alternatif", "ASC"]] });
+        dtAlternatif = await tb_pinjaman.findAll({ where:{lulus:true}, order: [["nik", "ASC"]] });
         dtKriteria = await tb_kriteria.findAll({ order: [["kode_kriteria", "ASC"]] });
         dtSurveis = await tb_hasil_survei.findAll({ order: [["id_hasil_survei", "ASC"]] });
 
         dtAlternatif.forEach(data => {
-            kd_alternatif.push(data.dataValues.kode_alternatif)
+            kd_alternatif.push(data.dataValues.nik)
         });
         dtKriteria.forEach(data => {
             kd_kriteria.push(data.dataValues.kode_kriteria)

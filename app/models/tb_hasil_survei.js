@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       // console.log(models);
-      tb_hasil_survei.hasOne(models.tb_alternatif,{foreignKey:'kode_alternatif',sourceKey:'kode_alternatif'});
-      tb_hasil_survei.belongsTo(models.tb_alternatif,{foreignKey:'kode_alternatif',targetKey:'kode_alternatif'})
+      tb_hasil_survei.hasOne(models.tb_pinjaman,{foreignKey:'nik',sourceKey:'kode_alternatif'});
+      tb_hasil_survei.belongsTo(models.tb_pinjaman,{foreignKey:'kode_alternatif',targetKey:'nik'})
     }
   };
   tb_hasil_survei.init({

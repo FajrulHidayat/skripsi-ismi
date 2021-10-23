@@ -79,11 +79,11 @@ class PinjamanController {
         //mencari data sesuai id
         dtPinjaman = await tb_pinjaman.findAll({
             where: {nik:req.params.nik},
-            order:[["id","ASC"]]
+            order:[["nik","ASC"]]
         });
       } else {
         //mencari emua data
-        dtPinjaman = await tb_pinjaman.findAll({order:[["id","ASC"]]});
+        dtPinjaman = await tb_pinjaman.findAll({order:[["nik","ASC"]]});
       }
       //menyeleksi data ada atau tidak
       if (dtPinjaman) {
@@ -248,7 +248,7 @@ class PinjamanController {
     console.log("entri");
       dtPinjaman = await tb_pinjaman.findAll({
           where: {lulus:true},
-          order:[["id","ASC"]]
+          order:[["nik","ASC"]]
       });
       
       if (dtPinjaman) {

@@ -1,4 +1,4 @@
-const { tb_hasil_survei,tb_kriteria,tb_alternatif } = require("../models");
+const { tb_hasil_survei,tb_kriteria,tb_alternatif,tb_pinjaman } = require("../models");
 
 class SurveiController {
     async SelectData(req, res) {
@@ -9,7 +9,7 @@ class SurveiController {
     
         //get data
         if (req.params.id == null) {
-          dtDocument = await tb_hasil_survei.findAll({ order: [["id_hasil_survei", "ASC"]],include:[{model: tb_alternatif}] });
+          dtDocument = await tb_hasil_survei.findAll({ order: [["id_hasil_survei", "ASC"]],include:[{model: tb_pinjaman}] });
         } else {
           dtDocument = await tb_hasil_survei.findOne({
             where: { id_hasil_survei: req.params.id },
@@ -278,7 +278,7 @@ class SurveiController {
         // }
         dtKriteria = await tb_kriteria.findAll({ order: [["kode_kriteria", "ASC"]] });
         // console.log(dtKriteria.length);
-        dtAlternatif = await tb_alternatif.findAll({ order: [["kode_alternatif", "ASC"]] });
+        dtAlternatif = await tb_pinjaman.findAll({ where:{lulus:true},order: [["nik", "ASC"]] });
         // console.log(dtAlternatif.length);
         dtSurvei = await tb_hasil_survei.findAll({ order: [["id_hasil_survei", "ASC"]] });
         // console.log(dtSurvei.length);
@@ -288,7 +288,7 @@ class SurveiController {
                 // console.log(dtKriteria[kriteria].dataValues.kode_kriteria);
                 if(dtSurvei.length===0){
                     item.push({
-                        kode_alternatif:dtAlternatif[alternatif].dataValues.kode_alternatif,
+                        kode_alternatif:dtAlternatif[alternatif].dataValues.nik,
                         kode_kriteria:dtKriteria[kriteria].dataValues.kode_kriteria,
                         nilai:0,
                         bobot:0
@@ -297,7 +297,7 @@ class SurveiController {
                     let ada=false
                     for (let survei = 0; survei < dtSurvei.length; survei++) {
                         if(
-                            (dtSurvei[survei].dataValues.kode_alternatif === dtAlternatif[alternatif].dataValues.kode_alternatif) 
+                            (dtSurvei[survei].dataValues.nik === dtAlternatif[alternatif].dataValues.nik) 
                             && 
                             (dtSurvei[survei].dataValues.kode_kriteria === dtKriteria[kriteria].dataValues.kode_kriteria)
                             ){
@@ -307,7 +307,7 @@ class SurveiController {
                     // console.log(ada);
                     if(!ada){
                     item.push({
-                        kode_alternatif:dtAlternatif[alternatif].dataValues.kode_alternatif,
+                        kode_alternatif:dtAlternatif[alternatif].dataValues.nik,
                         kode_kriteria:dtKriteria[kriteria].dataValues.kode_kriteria,
                         nilai:0,
                         bobot:0

@@ -2,13 +2,10 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('tb_pinjamans', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
+      
       nik: {
+        allowNull: false,
+        primaryKey: true,
         type: Sequelize.STRING
       },
       nama: {

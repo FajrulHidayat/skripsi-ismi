@@ -12,12 +12,12 @@ const dbService = require("../app/services/db.service");
  * Get port from environment and store in Express.
  */
 
-const PORT = normalizePort(process.env.PORT || "9090");
+const PORT = normalizePort(process.env.PORT || "9990");
 const ENV = process.env.NODE_ENV || "development";
 const DB = dbService(ENV, false).start();
 
-app.set('port', PORT);
-app.set('env', ENV);
+app.set("port", PORT);
+app.set("env", ENV);
 
 /**
  * Create HTTP server.
@@ -30,9 +30,8 @@ const server = http.createServer(app);
  */
 
 server.listen(PORT);
-server.on('error', onError);
-server.on('listening', onListening);
-
+server.on("error", onError);
+server.on("listening", onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -59,22 +58,23 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
+  if (error.syscall !== "listen") {
     throw error;
   }
 
-  let bind = typeof app.get('port') === 'string'
-    ? 'Pipe ' + app.get('port')
-    : 'Port ' + app.get('port');
+  let bind =
+    typeof app.get("port") === "string"
+      ? "Pipe " + app.get("port")
+      : "Port " + app.get("port");
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
       process.exit(1);
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
       process.exit(1);
       break;
     default:
@@ -87,7 +87,10 @@ function onError(error) {
  */
 
 function onListening() {
-  console.log('Express http-server listening on port %d in %s mode', app.get('port'), app.get('env'));
+  console.log(
+    "Express http-server listening on port %d in %s mode",
+    app.get("port"),
+    app.get("env")
+  );
   return DB;
- 
 }

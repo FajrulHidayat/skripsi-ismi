@@ -6,7 +6,7 @@ class TopsisController {
         let status;
         let message;
         let dtAlternatif,dtKriteria,dtSurveis;
-        let kd_alternatif=[],kd_kriteria=[],arr_survei=[],dtSurvei=[],hasil=[]
+        let kd_alternatif=[],kd_kriteria=[],arr_survei=[],dtSurvei=[],hasil=[],jenisUsaha=[]
         let pembagi=[],matriksPengali=[],matriksKeputusan=[],max=[],min=[],dPlus=[],dMin=[],preferensi=[]
         
         //get data
@@ -15,8 +15,25 @@ class TopsisController {
         dtSurveis = await tb_hasil_survei.findAll({ order: [["id_hasil_survei", "ASC"]] });
 
         dtAlternatif.forEach(data => {
+            let nilaiKriteria = (data.dataValues.hasil +data.dataValues.kekayaan)/2
+            switch (true) {
+              case (nilaiKriteria>=1000000 && nilaiKriteria<=5000000):
+                jenisUsaha.push("Micro")
+                break;
+              case (nilaiKriteria>=5000000 && nilaiKriteria<=10000000):
+                jenisUsaha.push("Kecil")
+                break;
+              case (nilaiKriteria>=10000000 ):
+                jenisUsaha.push("Menegah")
+                break;
+            
+              default:
+                jenisUsaha.push("Menegah")
+                break;
+            }
             kd_alternatif.push(data.dataValues.nik)
         });
+        
         dtKriteria.forEach(data => {
             kd_kriteria.push(data.dataValues.kode_kriteria)
         });
@@ -118,11 +135,12 @@ class TopsisController {
       var ranks = preferensi.map(function(v){ return sorted.indexOf(v)+1 });
       // console.log(ranks);
       hasil.push({ranks})
-     
+      hasil.push({jenisUsaha})
+      
           status = 200;
           message = "Sukses";
         // }
-    
+      
         //get diagnostic
         let time = Date.now() - req.start;
         const used = process.memoryUsage().heapUsed / 1024 / 1024;

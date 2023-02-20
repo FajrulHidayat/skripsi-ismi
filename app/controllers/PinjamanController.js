@@ -14,7 +14,7 @@ const diskStorage = multer.diskStorage({
     );
   },
 });
-const upload = multer({ storage: diskStorage }).single("file");
+const upload = multer({ storage: diskStorage }).array("file",5);
 // const resize = require("../services/resize.service");
 
 class PinjamanController {
@@ -24,12 +24,22 @@ class PinjamanController {
       let status;
       let message;
       let dtPinjaman;
+      let files="";
+      let oriFiles="";
       if (err instanceof multer.MulterError) {
         return res.status(200).json(err);
       } else if (err) {
         return res.status(200).json(err);
       }
-
+      req.files.forEach((element,index) => {
+        if (index !== 0) {
+          files+=","
+          oriFiles+=","
+        }
+        files += element.filename
+        oriFiles +=element.originalname
+      });
+      // console.log(files);
       const item = {
         nik: req.body.nik,
         nama: req.body.nama,
@@ -39,9 +49,10 @@ class PinjamanController {
         pendapatan: req.body.pendapatan,
         kekayaan: req.body.kekayaan,
         hasil: req.body.hasil,
-        foto: req.file.filename,
+        foto: files,
         lulus: false,
       };
+      // console.log(item.foto);
       dtPinjaman = await tb_pinjaman.create(item);
 
       status = 200;
@@ -69,10 +80,13 @@ class PinjamanController {
     let status;
     let message;
     let dtPinjaman;
+    let fileLink=[]
+    let result;
     //try catch untuk menangkap error
-    console.log("pinjaman");
+    // console.log("pinjaman");
     try {
-      const id = req.params.id;
+      const id = req.params.nik;
+      console.log(id);
       //menyeleksi id
       if (id) {
         //mencari data sesuai id
@@ -84,8 +98,16 @@ class PinjamanController {
         //mencari emua data
         dtPinjaman = await tb_pinjaman.findAll({ order: [["nik", "ASC"]] });
       }
+      let fileArray = dtPinjaman[0].dataValues.foto.split(",")
+      fileArray.forEach(element => {
+        fileLink.push("http://localhost:9990/image/pinjaman/"+element)
+      });
+      // console.log(fileLink);
       //menyeleksi data ada atau tidak
       if (dtPinjaman) {
+        result=dtPinjaman[0].dataValues
+        result.fileArray=fileArray
+        console.log(result);
         status = 200;
         message = "Data ditemukan";
       } else {
@@ -108,7 +130,7 @@ class PinjamanController {
         timestamp: Date(Date.now()).toString(),
         message: message,
       },
-      result: dtPinjaman,
+      result: [result],
     };
     //mengirim respon
     res.status(status).json(data);

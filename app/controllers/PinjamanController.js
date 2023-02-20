@@ -81,20 +81,22 @@ class PinjamanController {
     let message;
     let dtPinjaman;
     let fileLink=[]
-    let result;
+    let result=[];
     //try catch untuk menangkap error
     // console.log("pinjaman");
     try {
       const id = req.params.nik;
       console.log(id);
       //menyeleksi id
-      if (id) {
+      if (id!==undefined) {
+        console.log("one");
         //mencari data sesuai id
         dtPinjaman = await tb_pinjaman.findAll({
           where: { nik: req.params.nik },
           order: [["nik", "ASC"]],
         });
       } else {
+        console.log("all");
         //mencari emua data
         dtPinjaman = await tb_pinjaman.findAll({ order: [["nik", "ASC"]] });
       }
@@ -105,8 +107,14 @@ class PinjamanController {
       // console.log(fileLink);
       //menyeleksi data ada atau tidak
       if (dtPinjaman) {
-        result=dtPinjaman[0].dataValues
-        result.fileArray=fileArray
+        console.log(id);
+        if(id!==undefined){
+          result[0]=dtPinjaman[0].dataValues
+        result[0].fileArray=fileArray
+        }else{
+          result=dtPinjaman
+        }
+       
         console.log(result);
         status = 200;
         message = "Data ditemukan";
@@ -130,7 +138,7 @@ class PinjamanController {
         timestamp: Date(Date.now()).toString(),
         message: message,
       },
-      result: [result],
+      result: result,
     };
     //mengirim respon
     res.status(status).json(data);
